@@ -13,7 +13,7 @@ chars_indices = dict((c , i) for i , c in enumerate(chars))
 indices_chars = dict((i , c) for i , c in enumerate(chars))
 maxlen = 150
 step = 1
-#Generate sentences and next charachters
+#Generate sentences and next characters
 text2 = open('./Datasets/SS.txt' , 'r')
 sentences = []
 next_chars = []
@@ -26,7 +26,7 @@ for line in text2:
 		#Generate next charachter
 		next_char = line[i+1]
 		next_chars.append(next_char)
-#Vectorise - (sentances , sentance length , charachters)
+#Vectorise - (sentances , sentance length , characters)
 X = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
 Y = numpy.zeros((len(sentences) , len(chars)) , dtype = numpy.bool)
 #One-hot encoding
@@ -73,7 +73,7 @@ for iter in range(100):
 		x_pred[0 , t , chars_indices[char]] = 1.0
 	#Use that tensor to make a prediction of the next charachter
 	preds = model.predict(x_pred , verbose = 0)[0]
-	#Decode that charachter
+	#Decode that character
 	temperature = 0.2
 	preds = numpy.asarray(preds).astype('float64')
 	preds = numpy.log(preds) / temperature

@@ -38,15 +38,18 @@ tensorboard = keras.callbacks.TensorBoard(log_dir = './logs')
 
 #Setup neural network
 model = keras.models.Sequential()
-model.add(keras.layers.LSTM(3 , input_shape = (maxlen , len(chars)) , activation = 'relu'))
+model.add(keras.layers.LSTM(10 , input_shape = (maxlen , len(chars))))
+model.add(keras.layers.core.Dropout(0.25))
+model.add(keras.layers.Dense(150 , activation = 'relu'))
+model.add(keras.layers.core.Dropout(0.25))
 model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
 #Compile model
-model.compile(keras.optimizers.Adam(lr = 0.001) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+model.compile(keras.optimizers.Adam(lr = 0.0001) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
 model.summary()
 
 #Train model
-model.fit(X , Y , batch_size = 128 , epochs = 10 , verbose = 1 , callbacks = [tensorboard])
+model.fit(X , Y , batch_size = 128 , epochs = 3 , verbose = 2 , callbacks = [tensorboard])
 
 #Save Model
 model.save('model.h5')
@@ -59,7 +62,7 @@ model.save('model.h5')
 print('--------------------')
 start_index = random.randint(0 , len(text) - maxlen - 1)
 sentence = text[start_index : start_index + maxlen]
-print(sentence)
+print('Starting sequence:' , sentence)
 for iter in range(100):
 	#One-hot encode that sentance
 	x_pred = numpy.zeros((1 , maxlen , len(chars)))
