@@ -11,19 +11,21 @@ chars = sorted(list(set(text)))
 chars.remove('\n')
 chars_indices = dict((c , i) for i , c in enumerate(chars))
 indices_chars = dict((i , c) for i , c in enumerate(chars))
-maxlen = 5
+maxlen = 150
 step = 1
 #Generate sentences and next charachters
+text2 = open('SS_raw.txt' , 'r')
 sentences = []
 next_chars = []
-for i in range(0 , len(text) - maxlen , step):
-	char = text[i + maxlen]
-	sent = text[i : i + maxlen]
-	if char == '\n' or '\n' in sent:
-		pass
-	else:
-		sentences.append(sent)
-		next_chars.append(char)
+for line in text2:
+	line = line.strip()
+	#Generate sentences
+	for i in range(0 , len(line)-1 , step):
+		sentence = (line[0 : i+1])
+		sentences.append(sentence)
+		#Generate next charachter
+		next_char = line[i+1]
+		next_chars.append(next_char)
 #Vectorise - (sentances , sentance length , charachters)
 X = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
 Y = numpy.zeros((len(sentences) , len(chars)) , dtype = numpy.bool)
@@ -42,11 +44,11 @@ model.add(keras.layers.LSTM(3 , input_shape = (maxlen , len(chars)) , activation
 model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
 #Compile model
-model.compile(keras.optimizers.Adam(lr = 0.001) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+model.compile(keras.optimizers.Adam(lr = 0.1) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
 model.summary()
 
 #Train model
-model.fit(X , Y , batch_size = 128 , epochs = 10 , verbose = 1 , callbacks = [tensorboard])
+model.fit(X , Y , batch_size = 1 , epochs = 10 , verbose = 1 , callbacks = [tensorboard])
 
 #Save Model
 model.save('model.h5')
@@ -54,11 +56,15 @@ model.save('model.h5')
 #Load Model
 #model.load_weights('model.h5')
 
-
 #Generate
 print('--------------------')
-start_index = random.randint(0 , len(text) - maxlen - 1)
-sentence = text[start_index : start_index + maxlen]
+while True:
+	x = random.randint(0 , len(sentences))
+	sentence = sentences[x]
+	if 10 > len(sentence) > 3:
+		break
+	else:
+		continue
 print(sentence)
 for iter in range(100):
 	#One-hot encode that sentance

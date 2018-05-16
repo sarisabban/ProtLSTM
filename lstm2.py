@@ -2,11 +2,13 @@
 
 import numpy
 import keras
+import random
+import sys
 
 #Import text
 text = open('SS_raw.txt' , 'r').read()
 chars = sorted(list(set(text)))
-chars.remove('\n')
+chars = ['-' if x == '\n' else x for x in chars]
 chars_indices = dict((c , i) for i , c in enumerate(chars))
 indices_chars = dict((i , c) for i , c in enumerate(chars))
 maxlen = 150
@@ -26,8 +28,6 @@ for line in text2:
 		#Generate next charachter
 		next_char = line[i+1]
 		next_chars.append(next_char)
-		print(sentence , next_char)
-'''
 #Vectorise - (sentances , sentance length , charachters)
 X = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
 Y = numpy.zeros((len(sentences) , len(chars)) , dtype = numpy.bool)
@@ -47,23 +47,27 @@ model.add(keras.layers.LSTM(3 , input_shape = (maxlen , len(chars)) , activation
 model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
 #Compile model
-model.compile(keras.optimizers.Adam(lr = 0.1) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+model.compile(keras.optimizers.Adam(lr = 0.01) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
 model.summary()
 
 #Train model
-model.fit(X , Y , batch_size = 10 , epochs = 10 , verbose = 1 , callbacks = [tensorboard])
+model.fit(X , Y , batch_size = 60 , epochs = 10 , verbose = 1 , callbacks = [tensorboard])
 
 #Save Model
-#model.save('model.h5')
+model.save('model.h5')
 
 #Load Model
 #model.load_weights('model.h5')
-'''
-'''
+
 #Generate
 print('--------------------')
-start_index = random.randint(0 , len(text) - maxlen - 1)
-sentence = text[start_index : start_index + maxlen]
+while True:
+	x = random.randint(0 , len(sentences))
+	sentence = sentences[x]
+	if 10 > len(sentence.split('-')[0]) > 3:
+		break
+	else:
+		continue
 print(sentence)
 for iter in range(100):
 	#One-hot encode that sentance
@@ -85,4 +89,3 @@ for iter in range(100):
 	sys.stdout.write(next_char)
 	sys.stdout.flush()
 print('\n--------------------')
-'''
