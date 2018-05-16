@@ -38,9 +38,9 @@ tensorboard = keras.callbacks.TensorBoard(log_dir = './logs')
 
 #Setup neural network
 model = keras.models.Sequential()
-model.add(keras.layers.LSTM(50 , input_shape = (maxlen , len(chars))))
+model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars))))
 model.add(keras.layers.core.Dropout(0.25))
-model.add(keras.layers.Dense(150 , activation = 'relu'))
+model.add(keras.layers.Dense(300 , activation = 'relu'))
 model.add(keras.layers.core.Dropout(0.25))
 model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
@@ -49,7 +49,7 @@ model.compile(keras.optimizers.Adam(lr = 0.00001) , loss = 'categorical_crossent
 model.summary()
 
 #Train model
-model.fit(X , Y , batch_size = 256 , epochs = 10 , verbose = 2 , callbacks = [tensorboard])
+model.fit(X , Y , batch_size = 64 , epochs = 10 , verbose = 2 , callbacks = [tensorboard])
 
 #Save Model
 model.save('model.h5')
