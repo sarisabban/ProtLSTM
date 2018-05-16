@@ -6,7 +6,7 @@ import random
 import sys
 
 #Import text
-text = open('SS_raw.txt' , 'r').read()
+text = open('./Datasets/SS.txt' , 'r').read()
 chars = sorted(list(set(text)))
 chars.remove('\n')
 chars_indices = dict((c , i) for i , c in enumerate(chars))

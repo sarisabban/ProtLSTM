@@ -6,7 +6,7 @@ import random
 import sys
 
 #Import text
-text = open('SS_raw.txt' , 'r').read()
+text = open('./Datasets/SS.txt' , 'r').read()
 chars = sorted(list(set(text)))
 chars = ['-' if x == '\n' else x for x in chars]
 chars_indices = dict((c , i) for i , c in enumerate(chars))
@@ -14,7 +14,7 @@ indices_chars = dict((i , c) for i , c in enumerate(chars))
 maxlen = 150
 step = 1
 #Generate sentences and next charachters
-text2 = open('SS_raw.txt' , 'r')
+text2 = open('./Datasets/SS.txt' , 'r')
 sentences = []
 next_chars = []
 for line in text2:
