@@ -11,8 +11,8 @@ chars = sorted(list(set(text)))												# Make a list of all different charac
 chars_indices = dict((c , i) for i , c in enumerate(chars))								# Give each character a number
 indices_chars = dict((i , c) for i , c in enumerate(chars))								# The opposite, give each number a character
 #Generate sentences and next charachters
-maxlen = 40														#?Length of sentences
-step = 40														#?Number of charachters to move
+maxlen = 5														#?Length of sentences
+step = 1														#?Number of charachters to move
 sentences = []														# List of sentences
 next_chars = []														# List of the next characters that come after each sentence
 for i in range(0 , len(text) - maxlen , step):										# range (from , to end of text - length of text , move in step increments)
