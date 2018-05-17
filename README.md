@@ -7,10 +7,23 @@ An LSTM neural network to generate novel protein sequences
 `sudo apt update && sudo apt full-upgrade && sudo apt install python3-pip python3-pandas python3-numpy python3-tensorflow && pip3 install keras`
 
 ## Description:
-This is a script that uses Deep Learning Neural Networks, specifically an LSTM neural network, to 
+This is a script that uses Deep Learning Neural Networks, specifically an LSTM neural network, to generate protein sequences.
+
+There are two types of sequences that this script generates, a Secondary Structure (SS) sequence, and a FASTA sequence.
+
+
+
+
+
+
+
+
 
 ## How To Use:
-1. The database SS.cvs and SEQ.csv are already provided, but they can be generated using the Database.py script from the [AIDenovo project](https://github.com/sarisabban/AIDeNovo).
+### SS
+### FASTA
+
+1. The database SS.cvs and FASTA.csv are already provided, but they can be generated using the Database.py script from the [AIDenovo project](https://github.com/sarisabban/AIDeNovo).
 2. A trained model is also provided as model.h5 so you do not have to run the training everytime
 
 3. To generate a protein's secondary structure use the following command:
