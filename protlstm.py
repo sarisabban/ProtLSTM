@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import numpy
-#import keras
+import keras
 import pandas
 import random
 import sys
@@ -21,7 +21,7 @@ def SS(calc):
 	indices_chars = dict((i , c) for i , c in enumerate(chars))
 
 	#Generate sentences and next characters
-	maxlen = 150
+	maxlen = 50
 	step = 1
 	sentences = []
 	next_chars = []
