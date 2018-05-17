@@ -1,17 +1,21 @@
 #!/usr/bin/python3
 
 import numpy
-import keras
+#import keras
+import pandas
 import random
 import sys
 
 def SS(calc):
 	'''
 	This function trains or generates secondary structure 
-	protein sequences
+	protein sequences. This script is based on the
+	nietzsche LSTM example by Keras.
 	'''
 	#Import text
-	text = open('./Datasets/SS.txt' , 'r').read()
+	data = pandas.read_csv('./Datasets/SS.csv' , sep=';')
+	column = data['Secondary_Structures']
+	text = '\n'.join(column)
 	chars = sorted(list(set(text)))
 	chars_indices = dict((c , i) for i , c in enumerate(chars))
 	indices_chars = dict((i , c) for i , c in enumerate(chars))
@@ -88,12 +92,10 @@ def SS(calc):
 
 def FASTA(calc):
 	'''
-	This function trains or generates FASTA protein sequences
+	This function trains or generates FASTA protein sequences.
+	This script is based on the nietzsche LSTM example by Keras.
 	'''
 	pass
-
-
-
 
 
 
