@@ -13,7 +13,7 @@ def SS(calc):
 	nietzsche LSTM example by Keras.
 	'''
 	#Import text
-	data = pandas.read_csv('./Datasets/SS.csv' , sep=';')
+	data = pandas.read_csv('SS.csv' , sep=';')
 	column = data['Secondary_Structures']
 	text = '\n'.join(column)
 	chars = sorted(list(set(text)))
@@ -21,7 +21,7 @@ def SS(calc):
 	indices_chars = dict((i , c) for i , c in enumerate(chars))
 
 	#Generate sentences and next characters
-	maxlen = 50
+	maxlen = 70
 	step = 1
 	sentences = []
 	next_chars = []
@@ -48,18 +48,21 @@ def SS(calc):
 	model = keras.models.Sequential()
 	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars)) , return_sequences = True))
 	model.add(keras.layers.core.Dropout(0.25))
+	model.add(keras.layers.TimeDistributed(keras.layers.Dense(200)))
+	model.add(keras.layers.Activation('relu'))
+	model.add(keras.layers.core.Dropout(0.25))
 	model.add(keras.layers.TimeDistributed(keras.layers.Dense(len(chars))))
 	model.add(keras.layers.Activation('softmax'))
 
 	#Compile model
-	model.compile(keras.optimizers.Adam(lr = 0.001) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+	model.compile(keras.optimizers.Adam(lr = 0.01) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
 
 	if calc == 'train':
 		#TensorBoard log (tensorboard --logdir=./logs)
-		tensorboard = keras.callbacks.TensorBoard(log_dir = './logs')
+		tensorboard = keras.callbacks.TensorBoard(log_dir = './')
 		#Train model
 		model.summary()
-		model.fit(X , Y , batch_size = 128 , epochs = 10 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
+		model.fit(X , Y , batch_size = 128 , epochs = 60 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
 		#Save Model
 		model.save('SS.h5')
 
