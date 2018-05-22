@@ -4,7 +4,7 @@ An LSTM neural network to generate novel protein sequences
 ## Requirements:
 Use the following command (in GNU/Linux) to install all necessary programs and python modules for this script to run successfully:
 
-`sudo apt update && sudo apt full-upgrade && sudo apt install python3-pip python3-pandas python3-numpy python3-tensorflow && pip3 install keras`
+`sudo apt update && sudo apt full-upgrade && sudo apt install python3-pip python3-pandas python3-numpy python3-tensorflow tensorboard && pip3 install keras`
 
 ## Description:
 This is a script that uses Deep Learning Neural Networks (Keras on TensorFlow), specifically an LSTM neural network, to generate protein sequences.
@@ -28,13 +28,17 @@ On the other hand, the FASTA sequence can be used to generate totally new protei
 ## How To Use:
 The database SS.cvs and FASTA.csv are already provided, but they can be generated using the Database.py script from the [AIDenovo project](https://github.com/sarisabban/AIDeNovo).
 
-The neural networks are already trained, the SS neural network weights are in SS.h5 and the FASTA neural network weights are in FASTA.h5 so you will not have to train the neural network yourself, you can just execute the script and get an output immidiatly. But if you want to replicate the work and train the networks yourself, you can just simply run the following command:
+The neural networks are already trained (at accuracy of 85%), the SS neural network weights are in SS.h5 and the FASTA neural network weights are in FASTA.h5 so you will not have to train the neural network yourself, you can just execute the script and get an output immidiatly. You can view the training detailes using the following command:
+
+`tensorboard --logdir=./`
+
+If you want to replicate the work and train the networks yourself, you can just simply run the following command:
 
 `python3 protlstm.py train SS`
 
 `python3 protlstm.py train FASTA`
 
-This script will trian the neural network on the sepcified dataset (SS or FASTA) and save a new weights file (SS.h5 or FASTA.h5), a TensorBoard logs directory will also be generated to view the training results.
+This script will trian the neural network on the specified dataset (SS or FASTA) and save a new weights file (SS.h5 or FASTA.h5) and TensorBoard log file to view the training results. Currently the accuracy is low (85% for both datasets) even though the network is generating, what seems to be, good enough protein sequences. You are welcome to modify the neural network model and attempt to achieve higher accuracy, I will add you here as a collaborator.
 
 ### SS
 To generate a secondary structure (SS) sequence simply use the following command:
