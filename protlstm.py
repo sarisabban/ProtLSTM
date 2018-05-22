@@ -59,7 +59,7 @@ def SS(calc):
 		tensorboard = keras.callbacks.TensorBoard(log_dir = './')
 		#Train model
 		model.summary()
-		model.fit(X , Y , batch_size = 128 , epochs = 60 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
+		model.fit(X , Y , batch_size = 128 , epochs = 120 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
 		#Save Model
 		model.save('SS.h5')
 
