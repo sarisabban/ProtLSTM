@@ -46,10 +46,7 @@ def SS(calc):
 
 	#Setup neural network
 	model = keras.models.Sequential()
-	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars)) , return_sequences = True))
-	model.add(keras.layers.core.Dropout(0.25))
-	model.add(keras.layers.TimeDistributed(keras.layers.Dense(200)))
-	model.add(keras.layers.Activation('relu'))
+	model.add(keras.layers.LSTM(64 , input_shape = (maxlen , len(chars)) , return_sequences = True))
 	model.add(keras.layers.core.Dropout(0.25))
 	model.add(keras.layers.TimeDistributed(keras.layers.Dense(len(chars))))
 	model.add(keras.layers.Activation('softmax'))
@@ -74,7 +71,7 @@ def SS(calc):
 		start_index = random.randint(0 , len(text) - maxlen - 1)
 		sentence = text[start_index : start_index + maxlen]
 		print('Starting sequence:' , sentence)
-		for iter in range(100):
+		for iter in range(1000):
 			x_pred = numpy.zeros((1 , maxlen , len(chars)))
 			for t , char in enumerate(sentence):
 				x_pred[0 , t , chars_indices[char]] = 1.0
