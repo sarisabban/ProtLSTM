@@ -13,7 +13,7 @@ def SS(calc):
 	nietzsche LSTM example by Keras.
 	'''
 	#Import text
-	data = pandas.read_csv('SS.csv' , sep=';')
+	data = pandas.read_csv('SS.csv' , sep = ';')
 	column = data['Secondary_Structures']
 	text = '\n'.join(column)
 	chars = sorted(list(set(text)))
