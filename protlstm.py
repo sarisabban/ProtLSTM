@@ -58,7 +58,7 @@ def SS(calc):
 
 	if calc == 'train':
 		#TensorBoard log (tensorboard --logdir=./logs)
-		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , histogram_freq = 1 , write_grads = True)
+		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , write_grads = True)
 		#Train model
 		model.summary()
 		model.fit(X , Y , batch_size = 128 , epochs = 120 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
