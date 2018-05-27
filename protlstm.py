@@ -47,8 +47,10 @@ def SS(calc):
 	#Setup neural network
 	model = keras.models.Sequential()
 	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars)) , return_sequences = True))
+	model.add(keras.layers.BatchNormalization())
 	model.add(keras.layers.core.Dropout(0.25))
 	model.add(keras.layers.core.Dense(200 , activation = 'relu'))
+	model.add(keras.layers.BatchNormalization())
 	model.add(keras.layers.core.Dropout(0.25))
 	model.add(keras.layers.TimeDistributed(keras.layers.Dense(len(chars))))
 	model.add(keras.layers.Activation('softmax'))
