@@ -30,7 +30,6 @@ def SS(calc):
 		char = text[i + 1 : i + maxlen + 1]
 		sentences.append(sent)
 		next_chars.append(char)
-		#print(sent , char)
 
 	#Vectorise - (sentances , sentance length , characters)
 	X = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
@@ -99,8 +98,45 @@ def FASTA(calc):
 	This function trains or generates FASTA protein sequences.
 	This script is based on the nietzsche LSTM example by Keras.
 	'''
-	pass
+	#Import SS text
+	SSdata = pandas.read_csv('SS.csv' , sep = ';')
+	SScolumn = SSdata['Secondary_Structures']
+	SStext = '\n'.join(SScolumn)
+	SSchars = sorted(list(set(SStext)))
+	SSchars_indices = dict((c , i) for i , c in enumerate(SSchars))
+	SSindices_chars = dict((i , c) for i , c in enumerate(SSchars))
 
+	#Import FASTA text
+	FAdata = pandas.read_csv('FASTA.csv' , sep = ';')
+	FAcolumn = FAdata['Sequence']
+	FAtext = '\n'.join(FAcolumn)
+	FAchars = sorted(list(set(FAtext)))
+	FAchars_indices = dict((c , i) for i , c in enumerate(FAchars))
+	FAindices_chars = dict((i , c) for i , c in enumerate(FAchars))
+
+	#Generate sentences and next characters
+	maxlen = 70
+	step = 1
+	SSsentences = []
+	FAsentences = []
+	next_chars = []
+	for i in range(0 , len(SStext) - maxlen , step):
+		SSsent = SStext[i : i + maxlen]
+		FAsent = FAtext[i : i + maxlen]
+		FAchar = FAtext[i + 1 : i + maxlen + 1]
+		SSsentences.append(SSsent)
+		FAsentences.append(FAsent)
+		next_chars.append(FAchar)
+
+		#Vectorise - (sentances , sentance length , characters)
+		SSX = numpy.zeros((len(SSsentences) , maxlen , len(SSchars)) , dtype = numpy.bool)
+		FAX = numpy.zeros((len(FAsentences) , maxlen , len(FAchars)) , dtype = numpy.bool)
+		Y   = numpy.zeros((len(FAsentences) , maxlen , len(FAchars)) , dtype = numpy.bool)
+
+	#Combine SSX and FAX into X
+	print(SSX.shape)
+	print(FAX.shape)
+	print(Y.shape)
 
 
 
