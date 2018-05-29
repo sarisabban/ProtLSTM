@@ -56,7 +56,7 @@ def SS(calc):
 		#TensorBoard log (tensorboard --logdir=./logs)
 		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , histogram_freq = 1 , write_grads = True)
 		#Early stopping
-		stopping = keras.callbacks.EarlyStopping(monitor='val_loss' , patience = 50)
+		stopping = keras.callbacks.EarlyStopping(monitor = 'val_loss' , patience = 50)
 		#Train model
 		model.summary()
 		model.fit(X , Y , batch_size = 8192 , epochs = 1000 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard , stopping])
@@ -139,7 +139,7 @@ def FASTA(calc):
 		#TensorBoard log (tensorboard --logdir=./logs)
 		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , histogram_freq = 1 , write_grads = True)
 		#Early stopping
-		stopping = keras.callbacks.EarlyStopping(monitor='val_loss' , patience = 50)
+		stopping = keras.callbacks.EarlyStopping(monitor = 'val_loss' , patience = 50)
 		#Train model
 		model.summary()
 		model.fit(X , Y , batch_size = 8192 , epochs = 1000 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard , stopping])
