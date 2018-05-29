@@ -138,7 +138,7 @@ def FASTA(calc):
 	print(FAX.shape)
 	print(Y.shape)
 
-	x = numpy.stack([Y,FAX], axis=-1)  ### SSX and FAX SHAPES ARE NOT EQUAL ###
+	x = numpy.stack([Y , FAX] , axis = 2)  ### SSX and FAX SHAPES ARE NOT EQUAL ###
 	print(x.shape)
 
 
