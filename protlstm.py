@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import numpy
-import keras
+#import keras
 import pandas
 import random
 import sys
@@ -27,32 +27,27 @@ def SS(calc):
 	next_chars = []
 	for i in range(0 , len(text) - maxlen , step):
 		sent = text[i : i + maxlen]
-		char = text[i + 1 : i + maxlen + 1]
+		char = text[i + maxlen]
 		sentences.append(sent)
 		next_chars.append(char)
 
 	#Vectorise - (sentances , sentance length , characters)
-	X = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
-	Y = numpy.zeros((len(sentences) , maxlen , len(chars)) , dtype = numpy.bool)
+	X = numpy.zeros((len(sentences) , maxlen , len(chars)) , numpy.int)
+	Y = numpy.zeros((len(sentences) , len(chars)) , numpy.int)
 
 	#One-hot encoding
 	for i , sentence in enumerate(sentences):
 		for t , char in enumerate(sentence):
 			X[i , t , chars_indices[char]] = 1
-	for i , sentence in enumerate(next_chars):
-		for t , char in enumerate(sentence):
-			Y[i , t , chars_indices[char]] = 1
+		Y[i , chars_indices[next_chars[i]]] = 1
 
 	#Setup neural network
 	model = keras.models.Sequential()
-	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars)) , return_sequences = True))
+	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars))))
 	model.add(keras.layers.BatchNormalization())
-	#model.add(keras.layers.core.Dropout(0.25))
 	model.add(keras.layers.core.Dense(200 , activation = 'relu'))
 	model.add(keras.layers.BatchNormalization())
-	#model.add(keras.layers.core.Dropout(0.25))
-	model.add(keras.layers.TimeDistributed(keras.layers.Dense(len(chars))))
-	model.add(keras.layers.Activation('softmax'))
+	model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
 	#Compile model
 	model.compile(keras.optimizers.Adam(lr = 0.01) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
@@ -60,9 +55,11 @@ def SS(calc):
 	if calc == 'train':
 		#TensorBoard log (tensorboard --logdir=./logs)
 		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , histogram_freq = 1 , write_grads = True)
+		#Early stopping
+		stopping = keras.callbacks.EarlyStopping(monitor='val_loss' , patience = 50)
 		#Train model
 		model.summary()
-		model.fit(X , Y , batch_size = 512 , epochs = 120 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard])
+		model.fit(X , Y , batch_size = 8192 , epochs = 1000 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard , stopping])
 		#Save Model
 		model.save('SS.h5')
 
@@ -79,7 +76,7 @@ def SS(calc):
 			for t , char in enumerate(sentence):
 				x_pred[0 , t , chars_indices[char]] = 1.0
 			preds = model.predict(x_pred , verbose = 0)[0]
-			preds = preds[-1]
+			preds = preds#[-1]
 			temperature = 1.0
 			preds = numpy.asarray(preds).astype('float64')
 			preds[preds == 0.0] = 0.0000001
@@ -98,49 +95,83 @@ def FASTA(calc):
 	This function trains or generates FASTA protein sequences.
 	This script is based on the nietzsche LSTM example by Keras.
 	'''
-	#Import SS text
-	SSdata = pandas.read_csv('SS.csv' , sep = ';')
-	SScolumn = SSdata['Secondary_Structures']
-	SStext = '\n'.join(SScolumn)
-	SSchars = sorted(list(set(SStext)))
-	SSchars_indices = dict((c , i) for i , c in enumerate(SSchars))
-	SSindices_chars = dict((i , c) for i , c in enumerate(SSchars))
-
-	#Import FASTA text
-	FAdata = pandas.read_csv('FASTA.csv' , sep = ';')
-	FAcolumn = FAdata['Sequence']
-	FAtext = '\n'.join(FAcolumn)
-	FAchars = sorted(list(set(FAtext)))
-	FAchars_indices = dict((c , i) for i , c in enumerate(FAchars))
-	FAindices_chars = dict((i , c) for i , c in enumerate(FAchars))
+	#Import text
+	data = pandas.read_csv('FASTA.csv' , sep = ';')
+	column = data['Sequence']
+	text = '\n'.join(column)
+	chars = sorted(list(set(text)))
+	chars_indices = dict((c , i) for i , c in enumerate(chars))
+	indices_chars = dict((i , c) for i , c in enumerate(chars))
 
 	#Generate sentences and next characters
 	maxlen = 70
 	step = 1
-	SSsentences = []
-	FAsentences = []
+	sentences = []
 	next_chars = []
-	for i in range(0 , len(SStext) - maxlen , step):
-		SSsent = SStext[i : i + maxlen]
-		FAsent = FAtext[i : i + maxlen]
-		FAchar = FAtext[i + 1 : i + maxlen + 1]
-		SSsentences.append(SSsent)
-		FAsentences.append(FAsent)
-		next_chars.append(FAchar)
+	for i in range(0 , len(text) - maxlen , step):
+		sent = text[i : i + maxlen]
+		char = text[i + maxlen]
+		sentences.append(sent)
+		next_chars.append(char)
 
-		#Vectorise - (sentances , sentance length , characters)
-		SSX = numpy.zeros((len(SSsentences) , maxlen , len(SSchars)) , dtype = numpy.bool)
-		FAX = numpy.zeros((len(FAsentences) , maxlen , len(FAchars)) , dtype = numpy.bool)
-		Y   = numpy.zeros((len(FAsentences) , maxlen , len(FAchars)) , dtype = numpy.bool)
+	#Vectorise - (sentances , sentance length , characters)
+	X = numpy.zeros((len(sentences) , maxlen , len(chars)) , numpy.int)
+	Y = numpy.zeros((len(sentences) , len(chars)) , numpy.int)
 
-	#Combine SSX and FAX into X
-	print(SSX.shape)
-	print(FAX.shape)
-	print(Y.shape)
+	#One-hot encoding
+	for i , sentence in enumerate(sentences):
+		for t , char in enumerate(sentence):
+			X[i , t , chars_indices[char]] = 1
+		Y[i , chars_indices[next_chars[i]]] = 1
 
-	x = numpy.stack([Y , FAX] , axis = 2)  ### SSX and FAX SHAPES ARE NOT EQUAL ###
-	print(x.shape)
+	#Setup neural network
+	model = keras.models.Sequential()
+	model.add(keras.layers.LSTM(128 , input_shape = (maxlen , len(chars))))
+	model.add(keras.layers.BatchNormalization())
+	model.add(keras.layers.core.Dense(200 , activation = 'relu'))
+	model.add(keras.layers.BatchNormalization())
+	model.add(keras.layers.Dense(len(chars) , activation = 'softmax'))
 
+	#Compile model
+	model.compile(keras.optimizers.Adam(lr = 0.01) , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+
+	if calc == 'train':
+		#TensorBoard log (tensorboard --logdir=./logs)
+		tensorboard = keras.callbacks.TensorBoard(log_dir = './' , histogram_freq = 1 , write_grads = True)
+		#Early stopping
+		stopping = keras.callbacks.EarlyStopping(monitor='val_loss' , patience = 50)
+		#Train model
+		model.summary()
+		model.fit(X , Y , batch_size = 8192 , epochs = 1000 , validation_split = 0.2 , verbose = 2 , callbacks = [tensorboard , stopping])
+		#Save Model
+		model.save('FASTA.h5')
+
+	elif calc == 'generate':
+		#Load Model
+		model.load_weights('FASTA.h5')
+		#Generate
+		print('--------------------')
+		start_index = random.randint(0 , len(text) - maxlen - 1)
+		sentence = text[start_index : start_index + maxlen]
+		print('Starting sequence:' , sentence)
+		for iter in range(1000):
+			x_pred = numpy.zeros((1 , maxlen , len(chars)))
+			for t , char in enumerate(sentence):
+				x_pred[0 , t , chars_indices[char]] = 1.0
+			preds = model.predict(x_pred , verbose = 0)[0]
+			preds = preds#[-1]
+			temperature = 1.0
+			preds = numpy.asarray(preds).astype('float64')
+			preds[preds == 0.0] = 0.0000001
+			preds = numpy.log(preds) / temperature
+			exp_preds = numpy.exp(preds)
+			preds = exp_preds / numpy.sum(exp_preds)
+			probas = numpy.random.multinomial(1 , preds , 1)
+			next_index = numpy.argmax(probas)
+			next_char = indices_chars[next_index]
+			sentence = sentence[1 : ] + next_char
+			sys.stdout.write(next_char)
+			sys.stdout.flush()
 
 
 
@@ -149,8 +180,8 @@ if __name__ == '__main__':
 	calc = sys.argv[1]
 	sets = sys.argv[2]
 
-	if sets == 'SS':
+	if sets == 'SS' or sets == 'ss':
 		SS(calc)
 
-	elif sets == 'FASTA':
+	elif sets == 'FASTA' or sets == 'fasta':
 		FASTA(calc)
