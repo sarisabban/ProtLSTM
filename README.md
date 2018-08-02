@@ -1,3 +1,5 @@
+> This projetc has been moved to [ProtAI](https://github.com/sarisabban/ProtAI) (where I use a GAN instead of an LSTM to generate protein backbones instead of sequences)
+
 # ProtLSTM
 An LSTM neural network to generate novel protein sequences
 
@@ -51,17 +53,3 @@ To generate a FASTA sequence simply use the following command:
 `python3 protlstm.py generate FASTA`
 
 The FASTA sequence preforms additional analysis to give some sort of indication whether the sequence is useful or not. The first analysis is a BLAST run, to see how similar the generated protein sequence is to all other identified protein sequences in the NCBI nr database. The second analysis is a PSIPRED run, where the sequence is analysed for any secondary structures.
-
-
-
-
-
-
-
-BLAST example result:
-
-``
-
-PSIPRED example result:
-
-``
